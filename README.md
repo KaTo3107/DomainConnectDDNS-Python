@@ -6,6 +6,7 @@ domain-connect-dyndns [-h] [--config CONFIG]
                       {setup,update,status,remove}
                       [--ignore-previous-ip]
                       [--protocols (ipv4, ipv6)] 
+                      [--host HOST]
                       (--domain DOMAIN | --all)
 ```
 
@@ -21,6 +22,7 @@ domain-connect-dyndns [-h] [--config CONFIG]
 --all                   --- update all domains in config
 --ignore-previous-ip    --- update the IP even if no change detected.
 --protocols             --- a space separated list of protocols to set up. Possible values: ipv4, ipv6. Default: ipv4
+--host HOST             --- host to update (default: @ for root domain, * for wildcard, or specific subdomain)
 --backup-file           --- file path for backup domains before remove
 -h                      --- display help and exit
 ```
@@ -38,8 +40,12 @@ Examples
 ```
     domain-connect-dyndns setup --domain [domain]
     domain-connect-dyndns setup --domain [domain] --protocols ipv4 ipv6
+    domain-connect-dyndns setup --domain [domain] --host '*'
+    domain-connect-dyndns setup --domain [domain] --host 'www'
     domain-connect-dyndns update --domain [domain]
+    domain-connect-dyndns update --domain [domain] --host '*'
     domain-connect-dyndns status --domain [domain]
+    domain-connect-dyndns status --domain [domain] --host '*'
     domain-connect-dyndns remove --domain [domain] --backup-file settings.bak
     
     domain-connect-dyndns update --all

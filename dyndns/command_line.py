@@ -10,7 +10,7 @@ from dyndns import domain_remove
 from . import __version__
 
 
-def main():
+def create_parser():
     parser = argparse.ArgumentParser(description="Config domain for DynDNS")
 
     parser.add_argument('action', choices=['setup', 'update', 'status', 'remove'], help="action to be performed on "
@@ -25,11 +25,18 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--domain', type=str, help="domain to keep up to date")
     group.add_argument('--all', action='store_true', help="update all domains in config")
+    
+    parser.add_argument('--host', type=str, default='@', help="host to update (default: @ for root domain)")
+    return parser
+
+def main():
+    parser = create_parser()
 
     args = parser.parse_args()
 
     action = args.action
     domain = args.domain
+    host = args.host
     allargs = args.all
     settings = args.config
     backup_file = args.backup_file
@@ -78,11 +85,11 @@ def main():
 
     for domain in domains:
         if action == 'setup':
-            print(domain_setup.main(domain, protocols, settings))
+            print(domain_setup.main(domain, protocols, settings, host))
         elif action == 'update':
-            print(domain_update.main(domain, settings, ignore_previous_ip))
+            print(domain_update.main(domain, settings, ignore_previous_ip, host))
         elif action == 'status':
-            print(domain_status.main(domain, settings))
+            print(domain_status.main(domain, settings, host))
         elif action == 'remove':
             print(domain_remove.main(domain, settings, backup_file))
 

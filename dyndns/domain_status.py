@@ -2,7 +2,7 @@ import datetime
 import json
 
 
-def main(domain, settings='settings.txt'):
+def main(domain, settings='settings.txt', host='@'):
     # get local settings for domain
     try:
         with open(settings, "r") as settings_file:
@@ -18,6 +18,7 @@ def main(domain, settings='settings.txt'):
     # get data to display
     info = {
         'Domain': domain,
+        'Host': host,
     }
     if 'last_dns_check' in config[domain]:
         info['Last DNS check'] = datetime.datetime.fromtimestamp(config[domain]['last_dns_check']) \

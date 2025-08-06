@@ -44,7 +44,7 @@ my_resolver = dns.resolver.Resolver()
 my_resolver.nameservers = ['1.1.1.1', '8.8.8.8', '9.9.9.9', '156.154.70.1', '176.103.130.130']
 
 
-def main(domain, settings='settings.txt', ignore_previous_ip=False):
+def main(domain, settings='settings.txt', ignore_previous_ip=False, host='@'):
     # get local settings for domain
     try:
         with open(settings, "r") as settings_file:
@@ -107,14 +107,16 @@ def main(domain, settings='settings.txt', ignore_previous_ip=False):
                 ip[proto] = None
                 record_type = protocols[proto]['record_type']
                 try:
-                    answers[record_type] = my_resolver.query(domain, record_type)
+                    # Use host parameter for DNS resolution
+                    query_domain = domain if host == '@' else "{}.{}".format(host, domain)
+                    answers[record_type] = my_resolver.query(query_domain, record_type)
                     if not answers[record_type]:
-                        return "No {} record found for domain {}".format(record_type, domain)
+                        return "No {} record found for domain {}".format(record_type, query_domain)
                     ip[proto] = answers[record_type][0].address
                     print("  IP {} found in {} record".format(ip[proto], record_type))
 
                 except Exception as e:
-                    print("  No {} record found for domain {}".format(record_type, domain))
+                    print("  No {} record found for domain {}".format(record_type, query_domain))
 
             config[domain]['last_dns_check'] = int(time.time())
 
@@ -205,6 +207,7 @@ def main(domain, settings='settings.txt', ignore_previous_ip=False):
         params = {}
         for proto in protocols:
             params[proto] = public_ip[proto]
+        params['HOST'] = host
 
         dc.apply_domain_connect_template_async(
             context,

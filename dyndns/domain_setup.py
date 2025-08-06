@@ -13,7 +13,7 @@ from domainconnect import DomainConnect, DomainConnectAsyncCredentials, Template
 dc = DomainConnect()
 
 
-def main(domain, protocols, settings='settings.txt'):
+def main(domain, protocols, settings='settings.txt', host='@'):
     # get Domain Connect config
     try:
         config = dc.get_domain_config(domain)
@@ -24,7 +24,8 @@ def main(domain, protocols, settings='settings.txt'):
     params = {
         'IP': '0.0.0.0',
         'IPv4': '0.0.0.0',
-        'IPv6': '::'
+        'IPv6': '::',
+        'HOST': host
     }
 
     try:
@@ -85,7 +86,8 @@ def main(domain, protocols, settings='settings.txt'):
                     'refresh_token': context.refresh_token,
                     'iat': context.iat,
                     'access_token_expires_in': context.access_token_expires_in,
-                    'protocols': protocols
+                    'protocols': protocols,
+                    'host': host
                 }
             })
             json.dump(existing_config, settings_file, sort_keys=True, indent=1)
